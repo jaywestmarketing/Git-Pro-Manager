@@ -1,0 +1,6 @@
+{
+  "name": "Project Organizer",
+  "description": "Organize projects, track deadlines, costs, and return on cost in a centralized dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
