@@ -13,7 +13,7 @@ import androidx.compose.material.icons.filled.BusinessCenter
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -166,7 +166,7 @@ fun DashboardScreen(
                 Text("AVG. ROC", fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = OnSecondaryBlueContainer)
                 Text(String.format(Locale.getDefault(), "%.1f%%", avgRoi), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = OnSecondaryBlueContainer, modifier = Modifier.padding(top = 2.dp))
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
-                    Icon(Icons.Default.TrendingUp, contentDescription = null, tint = SecondaryBlueAccent, modifier = Modifier.size(14.dp))
+                    Icon(Icons.AutoMirrored.Filled.TrendingUp, contentDescription = null, tint = SecondaryBlueAccent, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("High Performing", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = SecondaryBlueAccent)
                 }
