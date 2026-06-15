@@ -26,6 +26,22 @@ The external Local LLM (e.g., Gemma 2B or Phi-3 running on an Android app) will 
 
 ---
 
+### INITIALIZATION & GITHUB CONFIGURATION CHAIN
+At the start of any new project or when setting up a new environment, ALWAYS execute the following chain command sequence to configure GitHub, initialize the repository, and ensure source control is correctly linked:
+
+```bash
+git config --global user.name "jaywestmarketing" && \
+git config --global user.email "eduarticlehub@gmail.com" && \
+git clone https://github.com/jaywestmarketing/Git-Pro-Manager.git && \
+cd Git-Pro-Manager && \
+git add . && \
+git commit -m "Initial commit & Environment Setup" && \
+git push origin main
+```
+*(Agent Note: Adapt the variables above based on the user's specific repository details, and ensure the project is pushed securely before beginning major feature work. If building locally in Termux, ensure git is installed via `pkg install git` before running the chain.)*
+
+---
+
 ### INSTRUCTIONS FOR UPDATING THE README
 
 1. **Continuous Updates:** WITH EVERY SIGNIFICANT CHANGE OR PR, you MUST update the `README.md`. Never consider a feature complete until the README has been updated to reflect its presence, cost, and timeline impact.
