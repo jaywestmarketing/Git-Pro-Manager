@@ -20,6 +20,8 @@ import org.json.JSONObject
 import android.util.Base64
 import android.util.Log
 
+import kotlinx.coroutines.flow.map
+
 data class ProjectAnalysisResult(
     val name: String,
     val description: String,
@@ -40,11 +42,29 @@ class ProjectViewModel(
             initialValue = emptyList()
         )
 
-    val githubToken = tokenManager.tokenFlow.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
-    )
+    private fun isRealToken(token: String?): Boolean {
+        if (token.isNullOrBlank()) return false
+        val t = token.trim()
+        return t != "YOUR_DEFAULT_GITHUB_TOKEN_HERE" && 
+               t != "MY_GITHUB_TOKEN" && 
+               !t.contains("YOUR_DEFAULT") && 
+               !t.contains("PLACEHOLDER")
+    }
+
+    val githubToken = tokenManager.tokenFlow
+        .map { token ->
+            if (isRealToken(token)) {
+                token
+            } else {
+                val defaultToken = com.example.BuildConfig.GITHUB_TOKEN
+                if (isRealToken(defaultToken)) defaultToken else null
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = if (isRealToken(com.example.BuildConfig.GITHUB_TOKEN)) com.example.BuildConfig.GITHUB_TOKEN else null
+        )
 
     private val _newRepos = MutableStateFlow<List<GithubRepo>>(emptyList())
     val newRepos: StateFlow<List<GithubRepo>> = _newRepos
@@ -58,8 +78,8 @@ class ProjectViewModel(
     init {
         // Automatically sync on launch if token is present
         viewModelScope.launch {
-            tokenManager.tokenFlow.collect { token ->
-                if (!token.isNullOrEmpty()) {
+            githubToken.collect { token ->
+                if (isRealToken(token)) {
                     syncGitHubRepos(token)
                 }
             }
@@ -75,8 +95,8 @@ class ProjectViewModel(
     }
 
     fun syncGitHubRepos(currentToken: String? = null) = viewModelScope.launch {
-        val token = currentToken ?: tokenManager.tokenFlow.firstOrNull() ?: return@launch
-        if (token.isBlank()) return@launch
+        val token = currentToken ?: githubToken.value ?: return@launch
+        if (!isRealToken(token)) return@launch
 
         _isSyncing.value = true
         _syncError.value = null
@@ -108,7 +128,7 @@ class ProjectViewModel(
     fun analyzeGithubRepo(repoId: Long, onResult: (ProjectAnalysisResult) -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             try {
-                val token = tokenManager.tokenFlow.firstOrNull()
+                val token = githubToken.value
                 if (token.isNullOrEmpty()) {
                     onError("No token available")
                     return@launch
