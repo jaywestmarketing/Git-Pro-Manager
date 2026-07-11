@@ -4,7 +4,7 @@
     "slug": "project-organizer",
     "extra": {
       "eas": {
-        "projectId": "YOUR_EAS_PROJECT_ID_HERE"
+        "projectId": "a79a8e0d-d723-4092-ab05-e3124f1a8c0e"
       }
     },
     "android": {
