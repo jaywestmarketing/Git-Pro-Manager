@@ -1,0 +1,8 @@
+{
+  "name": "project-organizer",
+  "version": "1.0.0",
+  "description": "Android app",
+  "scripts": {
+    "postinstall": "echo 'No node dependencies required'"
+  }
+}

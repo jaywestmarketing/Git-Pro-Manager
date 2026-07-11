@@ -124,13 +124,10 @@ fun DashboardScreen(
             }
             if (isSyncing) {
                 CircularProgressIndicator(modifier = Modifier.size(24.dp).padding(4.dp), color = PrimaryPurple, strokeWidth = 2.dp)
-            } else if (!githubToken.isNullOrEmpty()) {
+            } else if (!githubToken.isNullOrEmpty() && githubToken != "YOUR_GITHUB_TOKEN_HERE") {
                 IconButton(onClick = { viewModel.syncGitHubRepos() }) {
                     Icon(Icons.Default.Sync, contentDescription = "Sync", tint = TextMain)
                 }
-            }
-            IconButton(onClick = { showConfigDialog = true }) {
-                Icon(Icons.Default.MoreVert, contentDescription = "Settings", tint = TextMain)
             }
         }
 
