@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Project Organizer",
+    "slug": "project-organizer",
+    "android": {
+      "package": "com.aistudio.projecttracker.hksmza"
+    }
+  }
+}
