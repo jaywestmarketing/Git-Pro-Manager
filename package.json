@@ -1,11 +1,4 @@
 {
-  "name": "project-organizer",
-  "version": "1.0.0",
-  "description": "Android app",
-  "dependencies": {
-    "expo": "^51.0.0"
-  },
-  "scripts": {
-    "postinstall": "echo 'No node dependencies required'"
-  }
+  "name": "git-pro-manager",
+  "version": "1.0.0"
 }
