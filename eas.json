@@ -4,7 +4,6 @@
   },
   "build": {
     "preview": {
-      "prebuildCommand": "echo 'skipping prebuild'",
       "env": {
         "EAS_BUILD_NO_EXPO_GO_WARNING": "true"
       },
@@ -15,7 +14,6 @@
       }
     },
     "production": {
-      "prebuildCommand": "echo 'skipping prebuild'",
       "env": {
         "EAS_BUILD_NO_EXPO_GO_WARNING": "true"
       },

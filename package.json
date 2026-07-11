@@ -1,9 +1,7 @@
 {
   "name": "git-pro-manager",
   "version": "1.0.0",
-  "dependencies": {
-    "expo": "^51.0.0"
-  },
+  "dependencies": {},
   "scripts": {
     "postinstall": "echo 'No node dependencies required'"
   }
