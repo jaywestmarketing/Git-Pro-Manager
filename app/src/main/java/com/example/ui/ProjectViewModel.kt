@@ -45,26 +45,10 @@ class ProjectViewModel(
     private fun isRealToken(token: String?): Boolean {
         if (token.isNullOrBlank()) return false
         val t = token.trim()
-        return t != "YOUR_DEFAULT_GITHUB_TOKEN_HERE" && 
-               t != "MY_GITHUB_TOKEN" && 
-               !t.contains("YOUR_DEFAULT") && 
-               !t.contains("PLACEHOLDER")
+        return t != "YOUR_GITHUB_TOKEN_HERE"
     }
 
-    val githubToken = tokenManager.tokenFlow
-        .map { token ->
-            if (isRealToken(token)) {
-                token
-            } else {
-                val defaultToken = com.example.BuildConfig.GITHUB_TOKEN
-                if (isRealToken(defaultToken)) defaultToken else null
-            }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = if (isRealToken(com.example.BuildConfig.GITHUB_TOKEN)) com.example.BuildConfig.GITHUB_TOKEN else null
-        )
+    val githubToken = MutableStateFlow("YOUR_GITHUB_TOKEN_HERE")
 
     private val _newRepos = MutableStateFlow<List<GithubRepo>>(emptyList())
     val newRepos: StateFlow<List<GithubRepo>> = _newRepos
