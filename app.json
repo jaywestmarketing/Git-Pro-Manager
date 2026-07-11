@@ -2,6 +2,11 @@
   "expo": {
     "name": "Project Organizer",
     "slug": "project-organizer",
+    "extra": {
+      "eas": {
+        "projectId": "YOUR_EAS_PROJECT_ID_HERE"
+      }
+    },
     "android": {
       "package": "com.aistudio.projecttracker.hksmza"
     }
