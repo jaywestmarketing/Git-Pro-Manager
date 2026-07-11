@@ -1,6 +1,12 @@
 {
+  "cli": {
+    "appVersionSource": "local"
+  },
   "build": {
     "preview": {
+      "env": {
+        "EAS_BUILD_NO_EXPO_GO_WARNING": "true"
+      },
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleDebug",
@@ -8,6 +14,9 @@
       }
     },
     "production": {
+      "env": {
+        "EAS_BUILD_NO_EXPO_GO_WARNING": "true"
+      },
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease",
