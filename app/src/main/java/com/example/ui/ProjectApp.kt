@@ -28,19 +28,6 @@ fun ProjectApp(viewModel: ProjectViewModel) {
         val currentRoute = currentBackStackEntry?.destination?.route
 
         Scaffold(
-            floatingActionButton = {
-                if (currentRoute == "dashboard") {
-                    FloatingActionButton(
-                        onClick = { navController.navigate("add_edit/-1") },
-                        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.primary,
-                        contentColor = com.example.ui.theme.CardBackground,
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Project", modifier = Modifier.size(28.dp))
-                    }
-                }
-            },
-            floatingActionButtonPosition = FabPosition.End
         ) { paddingValues ->
             NavHost(
                 navController = navController,

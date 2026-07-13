@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BusinessCenter
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sync
@@ -49,6 +51,7 @@ fun DashboardScreen(
     val syncError by viewModel.syncError.collectAsStateWithLifecycle()
 
     var showConfigDialog by remember { mutableStateOf(false) }
+    var showAddDialog by remember { mutableStateOf(false) }
 
     val totalInitiatives = projects.size
     val totalCost = projects.sumOf { it.cost }
@@ -86,11 +89,41 @@ fun DashboardScreen(
         )
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+    if (showAddDialog) {
+        AddProjectDialog(
+            onDismiss = { showAddDialog = false },
+            onSave = { name, deadline, cost ->
+                viewModel.insertProject(
+                    Project(
+                        name = name,
+                        deadline = deadline,
+                        cost = cost,
+                        status = ProjectStatus.PLANNING
+                    )
+                )
+                showAddDialog = false
+            }
+        )
+    }
+
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDialog = true },
+                containerColor = PrimaryPurple,
+                contentColor = CardBackground,
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Project", modifier = Modifier.size(28.dp))
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
         // Top App Bar
         Row(
             modifier = Modifier
@@ -203,15 +236,20 @@ fun DashboardScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(projects) { project ->
-                    ProjectCard(project = project, onClick = { onProjectClick(project.id) })
+                    ProjectCard(
+                        project = project,
+                        onClick = { onProjectClick(project.id) },
+                        onDelete = { viewModel.deleteProject(project) }
+                    )
                 }
             }
         }
     }
+    }
 }
 
 @Composable
-fun ProjectCard(project: Project, onClick: () -> Unit) {
+fun ProjectCard(project: Project, onClick: () -> Unit, onDelete: () -> Unit = {}) {
     val (statusBg, statusText) = when(project.status) {
         ProjectStatus.PLANNING -> StatusNewBg to StatusNewText
         ProjectStatus.IN_PROGRESS -> StatusOnTrackBg to StatusOnTrackText
@@ -239,7 +277,8 @@ fun ProjectCard(project: Project, onClick: () -> Unit) {
                     text = project.name,
                     fontSize = 15.sp,
                     color = ValueTextColor,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
                 )
                 Box(
                     modifier = Modifier
@@ -252,6 +291,9 @@ fun ProjectCard(project: Project, onClick: () -> Unit) {
                         color = statusText,
                         fontWeight = FontWeight.Bold
                     )
+                }
+                IconButton(onClick = onDelete, modifier = Modifier.size(24.dp).padding(start = 4.dp)) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete Project", tint = Color.Gray, modifier = Modifier.size(18.dp))
                 }
             }
             
@@ -417,3 +459,67 @@ fun NewRepoSyncDialog(
     )
 }
 
+
+@Composable
+fun AddProjectDialog(
+    onDismiss: () -> Unit,
+    onSave: (String, Long, Double) -> Unit
+) {
+    var name by remember { mutableStateOf("") }
+    var deadlineStr by remember { mutableStateOf("") }
+    var costStr by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add New Project", fontWeight = FontWeight.Bold) },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Project Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = deadlineStr,
+                    onValueChange = { deadlineStr = it },
+                    label = { Text("Deadline (e.g. YYYY-MM-DD)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = costStr,
+                    onValueChange = { costStr = it },
+                    label = { Text("Estimated Cost") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val cost = costStr.toDoubleOrNull() ?: 0.0
+                    var deadline = 0L
+                    try {
+                        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        deadline = sdf.parse(deadlineStr)?.time ?: 0L
+                    } catch (e: Exception) {}
+                    
+                    onSave(name, deadline, cost)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)
+            ) {
+                Text("Add")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
