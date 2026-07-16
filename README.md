@@ -35,20 +35,12 @@ Git Pro Manager is a high-performance native Android application built using Kot
 A rigorous architectural audit of previous build failures has identified a structural mismatch in trying to compile this native Gradle-based project through EAS (Expo Application Services) Build.
 
 ### 1. Structural Mismatch (EAS vs. Native Gradle)
-- **Root Cause**: EAS Build is designed primarily for Expo React Native apps. It expects a JavaScript/TypeScript workspace root containing a `package.json`, an `app.json`, and an `android/` subfolder containing the native code.
-- **Inefficiency Pattern**: The project workspace is a 100% native Android project where the root directory `/` serves as the Gradle root (containing `build.gradle.kts`, `settings.gradle.kts`, `gradle/`).
+- **Root Cause**: EAS Build is designed primarily for Expo React Native apps. Because the project previously contained a `package.json` with `expo` and `react-native` dependencies, EAS auto-detected the project as a React Native app.
+- **Inefficiency Pattern**: EAS attempted to run `npx expo prebuild` to generate a React Native `android/` directory on the builder, overriding our native configurations. This generated React Native gradle scripts which tried to execute the `:app:createBundleReleaseJsAndAssets` task, failing because this is a purely Native Android app with no JavaScript bundle.
 
-### 2. The Fragile Symlink Hack
-- **Root Cause**: To bypass EAS constraints, the previous developer created an artificial `android/` subdirectory filled with relative symlinks (`ln -s ../app app`, etc.). 
-- **Inefficiency Pattern**: When EAS packages, zips, or uses Git to upload the repository, symlinks are often not preserved, or they resolve to broken external references on the EAS virtual builders. This causes the remote builder to fail immediately with missing files or inaccessible directories.
-
-### 3. Keystore Path Drift
-- **Root Cause**: `app/build.gradle.kts` was hardcoded to look for `debug.keystore` inside `file("${rootDir}/debug.keystore")`. When running from an artificial `android/` directory, `${rootDir}` shifted, causing a `Keystore file not found` failure during compilation.
-- **Correction Applied**: We modified the Gradle build configuration to dynamically detect, decode, and write `debug.keystore` from the secure Base64 resource (`debug.keystore.base64`) directly at the runtime `rootDir` if it is missing, preventing keystore-related compile errors.
-
-### 4. Git Metadata Absence
-- **Root Cause**: Running Git commands like `git log` inside the isolated sandbox failed with `fatal: not a git repository` because the container's working directory was not initialized as a git repository.
-- **Solution**: We bypass unnecessary native `git` CLI shell invocations and instead rely on clean file-based operations.
+### 2. The Fix: Decoupling React Native from EAS
+- **Correction Applied**: We have completely removed `expo` and `react-native` dependencies from `package.json`. Additionally, we cleared out the temporary `android/` directory hack. 
+- **Result**: EAS Build will now recognize the workspace root `/` as a standard Android project (since it contains `gradlew` and `settings.gradle.kts` at the root) and directly execute the native `./gradlew assembleDebug` (or assembleRelease) task as defined in `eas.json`, without attempting to inject React Native bundling tasks.
 
 ---
 
