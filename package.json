@@ -1,7 +1,12 @@
 {
   "name": "git-pro-manager",
   "version": "1.0.0",
+  "devDependencies": {
+    "expo": "^51.0.0"
+  },
   "scripts": {
-    "expo": "echo 'Skipping Expo prebuild for purely native Android project'"
+    "expo": "echo 'Skipping Expo prebuild'",
+    "eas-build-post-build": "mkdir -p android/app/build/outputs && cp -R app/build/outputs/* android/app/build/outputs/ || true",
+    "eas-build-on-success": "mkdir -p android/app/build/outputs && cp -R app/build/outputs/* android/app/build/outputs/ || true"
   }
 }
