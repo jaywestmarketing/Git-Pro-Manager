@@ -1,0 +1,7 @@
+{
+  "name": "git-pro-manager",
+  "version": "1.0.0",
+  "scripts": {
+    "expo": "echo 'Skipping Expo prebuild for purely native Android project'"
+  }
+}
