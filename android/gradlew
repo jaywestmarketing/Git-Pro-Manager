@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-exec ../gradlew "$@" -p ..
+chmod +x ../gradlew || true
+exec bash ../gradlew "$@" -p ..
