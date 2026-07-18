@@ -1,0 +1,16 @@
+tasks.whenTaskAdded { task ->
+    if (task.name.startsWith("assemble")) {
+        task.doLast {
+            println "Copying APKs for ${task.name} to android/ directory for EAS..."
+            def dest = new File(project.rootDir, "android/app/build/outputs")
+            dest.mkdirs()
+            def src = new File(project.buildDir, "outputs")
+            if (src.exists()) {
+                project.copy {
+                    from src
+                    into dest
+                }
+            }
+        }
+    }
+}
